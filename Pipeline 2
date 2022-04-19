@@ -1,0 +1,2020 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "b804307b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "## Use this for consistency in graphs through out the notebook\n",
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import seaborn as sns \n",
+    "import re\n",
+    "# to make this notebook's output stable across runs\n",
+    "np.random.seed(123)\n",
+    "import scipy\n",
+    "import sklearn\n",
+    "from sklearn.compose import ColumnTransformer\n",
+    "from sklearn.pipeline import Pipeline\n",
+    "from sklearn.impute import SimpleImputer\n",
+    "from sklearn.preprocessing import StandardScaler\n",
+    "from sklearn.preprocessing import MinMaxScaler\n",
+    "from sklearn.preprocessing import OneHotEncoder\n",
+    "from sklearn.preprocessing import FunctionTransformer\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.model_selection import StratifiedShuffleSplit\n",
+    "from sklearn.model_selection import GridSearchCV\n",
+    "from sklearn import metrics\n",
+    "from sklearn.metrics import RocCurveDisplay\n",
+    "from sklearn.metrics import roc_auc_score\n",
+    "from sklearn.metrics import precision_recall_curve\n",
+    "from sklearn import svm\n",
+    "from sklearn.datasets import make_classification\n",
+    "from sklearn.metrics import ConfusionMatrixDisplay\n",
+    "from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score\n",
+    "from sklearn.decomposition import PCA\n",
+    "from sklearn.impute import SimpleImputer\n",
+    "\n",
+    "# To plot pretty figures\n",
+    "%matplotlib inline\n",
+    "import matplotlib\n",
+    "import matplotlib.pyplot as plt\n",
+    "plt.rcParams['axes.labelsize'] = 14\n",
+    "plt.rcParams['xtick.labelsize'] = 12\n",
+    "plt.rcParams['ytick.labelsize'] = 12\n",
+    "from sklearn.model_selection import cross_validate"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "a99f42ad",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<Figure size 1728x1008 with 0 Axes>"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "<Figure size 1728x1008 with 0 Axes>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#required imports\n",
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "np.random.seed(123)\n",
+    "import scipy\n",
+    "import sklearn\n",
+    "from sklearn.compose import ColumnTransformer\n",
+    "from sklearn.pipeline import Pipeline\n",
+    "from sklearn.impute import SimpleImputer\n",
+    "from sklearn.preprocessing import StandardScaler\n",
+    "from sklearn.preprocessing import MinMaxScaler\n",
+    "from sklearn.preprocessing import OneHotEncoder\n",
+    "from sklearn.preprocessing import FunctionTransformer\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.model_selection import StratifiedShuffleSplit\n",
+    "from sklearn.model_selection import GridSearchCV\n",
+    "from sklearn import metrics\n",
+    "from sklearn.metrics import RocCurveDisplay\n",
+    "from sklearn.metrics import roc_auc_score\n",
+    "from sklearn.metrics import precision_recall_curve\n",
+    "from sklearn import svm\n",
+    "from sklearn.datasets import make_classification\n",
+    "from sklearn.metrics import ConfusionMatrixDisplay,confusion_matrix,classification_report\n",
+    "from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score\n",
+    "from sklearn.model_selection import RandomizedSearchCV\n",
+    "# To plot pretty figures\n",
+    "%matplotlib inline\n",
+    "import matplotlib\n",
+    "import matplotlib.pyplot as plt\n",
+    "plt.rcParams['axes.labelsize'] = 14\n",
+    "plt.rcParams['xtick.labelsize'] = 12\n",
+    "plt.rcParams['ytick.labelsize'] = 12\n",
+    "from IPython.display import SVG\n",
+    "from graphviz import Source\n",
+    "from sklearn import tree\n",
+    "from scipy import stats\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.ensemble import ExtraTreesClassifier\n",
+    "from sklearn.ensemble import AdaBoostClassifier\n",
+    "from sklearn import ensemble\n",
+    "from sklearn.model_selection import learning_curve\n",
+    "from sklearn.metrics import roc_auc_score\n",
+    "import plotly.express as px\n",
+    "from matplotlib import rcParams\n",
+    "from random import randint\n",
+    "from datetime import datetime\n",
+    "from datetime import date, timedelta\n",
+    "import time\n",
+    "from pprint import pprint\n",
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "from sklearn.naive_bayes import GaussianNB\n",
+    "from sklearn.svm import SVC\n",
+    "from sklearn.datasets import load_digits\n",
+    "from sklearn.model_selection import learning_curve\n",
+    "from sklearn.model_selection import ShuffleSplit\n",
+    "from yellowbrick.model_selection import learning_curve\n",
+    "from sklearn.pipeline import Pipeline\n",
+    "from sklearn.pipeline import FeatureUnion\n",
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "from sklearn.naive_bayes import GaussianNB\n",
+    "from sklearn.svm import SVC\n",
+    "from sklearn.datasets import load_digits\n",
+    "from sklearn.model_selection import learning_curve\n",
+    "from sklearn.model_selection import ShuffleSplit\n",
+    "from sklearn.tree import DecisionTreeClassifier\n",
+    "import seaborn as sns\n",
+    "plt.figure(figsize=(24,14))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "dcb7596e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from numpy import mean\n",
+    "from numpy import std\n",
+    "from pandas import read_csv\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.impute import KNNImputer\n",
+    "from sklearn.model_selection import cross_val_score\n",
+    "from sklearn.model_selection import RepeatedStratifiedKFold\n",
+    "from sklearn.pipeline import Pipeline\n",
+    "from matplotlib import pyplot\n",
+    "rcParams['figure.figsize'] = 20,16\n",
+    "rcParams['figure.figsize'] = 20,16"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "2d83c3dc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "\n",
+    "##################################################\n",
+    "from sklearn.base import BaseEstimator, TransformerMixin\n",
+    "\n",
+    "## balance features\n",
+    "class AmongFeaturesMeanImputer(BaseEstimator, TransformerMixin):\n",
+    "    def __init__(self, column=[], features=[]):\n",
+    "        \"\"\" column: feature to be imputed\n",
+    "            features: features to for average values (can include column)\n",
+    "        \"\"\"\n",
+    "        self.features = features\n",
+    "        self.column = column\n",
+    "\n",
+    "    def fit(self, X, y = None):\n",
+    "        return self\n",
+    "\n",
+    "    def transform(self, X, y = None):\n",
+    "        for feature in self.features:\n",
+    "            X[feature].fillna(X[self.features].mean(axis=1,skipna=True),inplace=True)\n",
+    "        return X\n",
+    "\n",
+    "# debit and credit features\n",
+    "class FromFeatureImputer(BaseEstimator, TransformerMixin):\n",
+    "    def __init__(self, features=[]):\n",
+    "        \"\"\" Column: feature to be imputed\n",
+    "            feature: feature to provide value\n",
+    "        \"\"\"\n",
+    "        self.features = features\n",
+    "#         self.column = column\n",
+    "\n",
+    "    def fit(self, X, y = None):\n",
+    "        return self\n",
+    "\n",
+    "    def transform(self, X, y = None):\n",
+    "        print(self.features)\n",
+    "        print([self.features[0]])\n",
+    "        print(self.features + [self.features[0]])\n",
+    "        feature_list = self.features + [self.features[0]]\n",
+    "        for i, feature in enumerate(feature_list):\n",
+    "            if i < len(feature_list)-1:\n",
+    "                X[feature] = X[feature].fillna(X[feature_list[i+1]]*(1+np.random.randn()))\n",
+    "        return X \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "id": "08200616",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data_in= pd.read_csv (r'/Users/beepboop/Desktop/Machine learning/Group_project/visathon_train_data.csv')\n",
+    "df_=data_in.copy()\n",
+    "#train_data=df_.replace({'nan':np.NaN})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "id": "5b688423",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>customer_id</th>\n",
+       "      <th>vintage</th>\n",
+       "      <th>age</th>\n",
+       "      <th>gender</th>\n",
+       "      <th>dependents</th>\n",
+       "      <th>occupation</th>\n",
+       "      <th>customer_nw_category</th>\n",
+       "      <th>branch_code</th>\n",
+       "      <th>days_since_last_transaction</th>\n",
+       "      <th>current_balance</th>\n",
+       "      <th>previous_month_end_balance</th>\n",
+       "      <th>average_monthly_balance_prevQ</th>\n",
+       "      <th>average_monthly_balance_prevQ2</th>\n",
+       "      <th>current_month_credit</th>\n",
+       "      <th>previous_month_credit</th>\n",
+       "      <th>current_month_debit</th>\n",
+       "      <th>previous_month_debit</th>\n",
+       "      <th>current_month_balance</th>\n",
+       "      <th>previous_month_balance</th>\n",
+       "      <th>churn</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1.0</td>\n",
+       "      <td>3135.0</td>\n",
+       "      <td>66.0</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Engineer</td>\n",
+       "      <td>Medium</td>\n",
+       "      <td>755.0</td>\n",
+       "      <td>224.0</td>\n",
+       "      <td>1458.71</td>\n",
+       "      <td>1458.71</td>\n",
+       "      <td>1458.71</td>\n",
+       "      <td>1449.07</td>\n",
+       "      <td>0.20</td>\n",
+       "      <td>0.20</td>\n",
+       "      <td>0.20</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1458.71</td>\n",
+       "      <td>1458.71</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>6.0</td>\n",
+       "      <td>2531.0</td>\n",
+       "      <td>42.0</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>Engineer</td>\n",
+       "      <td>Low</td>\n",
+       "      <td>388.0</td>\n",
+       "      <td>58.0</td>\n",
+       "      <td>927.72</td>\n",
+       "      <td>1401.72</td>\n",
+       "      <td>1643.31</td>\n",
+       "      <td>1871.12</td>\n",
+       "      <td>0.33</td>\n",
+       "      <td>714.61</td>\n",
+       "      <td>588.62</td>\n",
+       "      <td>1538.06</td>\n",
+       "      <td>1157.15</td>\n",
+       "      <td>1677.16</td>\n",
+       "      <td>No</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>7.0</td>\n",
+       "      <td>263.0</td>\n",
+       "      <td>42.0</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Engineer</td>\n",
+       "      <td>Medium</td>\n",
+       "      <td>1666.0</td>\n",
+       "      <td>60.0</td>\n",
+       "      <td>15202.20</td>\n",
+       "      <td>16059.34</td>\n",
+       "      <td>15211.29</td>\n",
+       "      <td>13798.82</td>\n",
+       "      <td>0.36</td>\n",
+       "      <td>0.36</td>\n",
+       "      <td>857.50</td>\n",
+       "      <td>286.07</td>\n",
+       "      <td>15719.44</td>\n",
+       "      <td>15349.75</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>8.0</td>\n",
+       "      <td>5922.0</td>\n",
+       "      <td>72.0</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Lawyer</td>\n",
+       "      <td>High</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>98.0</td>\n",
+       "      <td>7006.93</td>\n",
+       "      <td>7714.19</td>\n",
+       "      <td>7859.74</td>\n",
+       "      <td>11232.37</td>\n",
+       "      <td>0.64</td>\n",
+       "      <td>0.64</td>\n",
+       "      <td>1299.64</td>\n",
+       "      <td>439.26</td>\n",
+       "      <td>7076.06</td>\n",
+       "      <td>7755.98</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>9.0</td>\n",
+       "      <td>1145.0</td>\n",
+       "      <td>46.0</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Engineer</td>\n",
+       "      <td>Medium</td>\n",
+       "      <td>317.0</td>\n",
+       "      <td>172.0</td>\n",
+       "      <td>10096.58</td>\n",
+       "      <td>8519.53</td>\n",
+       "      <td>6511.82</td>\n",
+       "      <td>16314.17</td>\n",
+       "      <td>0.27</td>\n",
+       "      <td>0.27</td>\n",
+       "      <td>443.13</td>\n",
+       "      <td>5688.44</td>\n",
+       "      <td>8563.84</td>\n",
+       "      <td>5317.04</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17649</th>\n",
+       "      <td>24208.0</td>\n",
+       "      <td>2004.0</td>\n",
+       "      <td>34.0</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Engineer</td>\n",
+       "      <td>Medium</td>\n",
+       "      <td>275.0</td>\n",
+       "      <td>97.0</td>\n",
+       "      <td>2585.55</td>\n",
+       "      <td>2308.48</td>\n",
+       "      <td>2386.92</td>\n",
+       "      <td>3274.49</td>\n",
+       "      <td>0.26</td>\n",
+       "      <td>0.26</td>\n",
+       "      <td>8.50</td>\n",
+       "      <td>162.79</td>\n",
+       "      <td>2365.52</td>\n",
+       "      <td>2324.21</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17650</th>\n",
+       "      <td>24209.0</td>\n",
+       "      <td>1754.0</td>\n",
+       "      <td>48.0</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Engineer</td>\n",
+       "      <td>Low</td>\n",
+       "      <td>1415.0</td>\n",
+       "      <td>56.0</td>\n",
+       "      <td>26474.05</td>\n",
+       "      <td>34.01</td>\n",
+       "      <td>7985.55</td>\n",
+       "      <td>1486.99</td>\n",
+       "      <td>0.09</td>\n",
+       "      <td>200.09</td>\n",
+       "      <td>188.61</td>\n",
+       "      <td>188.61</td>\n",
+       "      <td>23745.37</td>\n",
+       "      <td>38.98</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17651</th>\n",
+       "      <td>24210.0</td>\n",
+       "      <td>918.0</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Engineer</td>\n",
+       "      <td>Medium</td>\n",
+       "      <td>2545.0</td>\n",
+       "      <td>60.0</td>\n",
+       "      <td>2897.10</td>\n",
+       "      <td>4325.68</td>\n",
+       "      <td>3790.96</td>\n",
+       "      <td>4566.52</td>\n",
+       "      <td>0.30</td>\n",
+       "      <td>0.30</td>\n",
+       "      <td>1428.87</td>\n",
+       "      <td>714.59</td>\n",
+       "      <td>3389.72</td>\n",
+       "      <td>4325.68</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17652</th>\n",
+       "      <td>24211.0</td>\n",
+       "      <td>1680.0</td>\n",
+       "      <td>43.0</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Engineer</td>\n",
+       "      <td>Low</td>\n",
+       "      <td>140.0</td>\n",
+       "      <td>339.0</td>\n",
+       "      <td>3227.34</td>\n",
+       "      <td>3227.34</td>\n",
+       "      <td>3227.34</td>\n",
+       "      <td>3207.12</td>\n",
+       "      <td>0.61</td>\n",
+       "      <td>0.61</td>\n",
+       "      <td>0.61</td>\n",
+       "      <td>0.61</td>\n",
+       "      <td>3227.34</td>\n",
+       "      <td>3227.34</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17653</th>\n",
+       "      <td>24212.0</td>\n",
+       "      <td>3441.0</td>\n",
+       "      <td>70.0</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Lawyer</td>\n",
+       "      <td>Medium</td>\n",
+       "      <td>265.0</td>\n",
+       "      <td>32.0</td>\n",
+       "      <td>937.00</td>\n",
+       "      <td>965.57</td>\n",
+       "      <td>3167.26</td>\n",
+       "      <td>6232.00</td>\n",
+       "      <td>0.40</td>\n",
+       "      <td>3562.12</td>\n",
+       "      <td>14.69</td>\n",
+       "      <td>6728.97</td>\n",
+       "      <td>948.82</td>\n",
+       "      <td>4074.91</td>\n",
+       "      <td>No</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>17654 rows × 20 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       customer_id  vintage   age  gender  dependents occupation  \\\n",
+       "0              1.0   3135.0  66.0    Male         0.0   Engineer   \n",
+       "1              6.0   2531.0  42.0    Male         2.0   Engineer   \n",
+       "2              7.0    263.0  42.0  Female         0.0   Engineer   \n",
+       "3              8.0   5922.0  72.0    Male         0.0     Lawyer   \n",
+       "4              9.0   1145.0  46.0    Male         0.0   Engineer   \n",
+       "...            ...      ...   ...     ...         ...        ...   \n",
+       "17649      24208.0   2004.0  34.0  Female         0.0   Engineer   \n",
+       "17650      24209.0   1754.0  48.0    Male         0.0   Engineer   \n",
+       "17651      24210.0    918.0  35.0  Female         0.0   Engineer   \n",
+       "17652      24211.0   1680.0  43.0  Female         0.0   Engineer   \n",
+       "17653      24212.0   3441.0  70.0  Female         0.0     Lawyer   \n",
+       "\n",
+       "      customer_nw_category  branch_code  days_since_last_transaction  \\\n",
+       "0                   Medium        755.0                        224.0   \n",
+       "1                      Low        388.0                         58.0   \n",
+       "2                   Medium       1666.0                         60.0   \n",
+       "3                     High          1.0                         98.0   \n",
+       "4                   Medium        317.0                        172.0   \n",
+       "...                    ...          ...                          ...   \n",
+       "17649               Medium        275.0                         97.0   \n",
+       "17650                  Low       1415.0                         56.0   \n",
+       "17651               Medium       2545.0                         60.0   \n",
+       "17652                  Low        140.0                        339.0   \n",
+       "17653               Medium        265.0                         32.0   \n",
+       "\n",
+       "       current_balance  previous_month_end_balance  \\\n",
+       "0              1458.71                     1458.71   \n",
+       "1               927.72                     1401.72   \n",
+       "2             15202.20                    16059.34   \n",
+       "3              7006.93                     7714.19   \n",
+       "4             10096.58                     8519.53   \n",
+       "...                ...                         ...   \n",
+       "17649          2585.55                     2308.48   \n",
+       "17650         26474.05                       34.01   \n",
+       "17651          2897.10                     4325.68   \n",
+       "17652          3227.34                     3227.34   \n",
+       "17653           937.00                      965.57   \n",
+       "\n",
+       "       average_monthly_balance_prevQ  average_monthly_balance_prevQ2  \\\n",
+       "0                            1458.71                         1449.07   \n",
+       "1                            1643.31                         1871.12   \n",
+       "2                           15211.29                        13798.82   \n",
+       "3                            7859.74                        11232.37   \n",
+       "4                            6511.82                        16314.17   \n",
+       "...                              ...                             ...   \n",
+       "17649                        2386.92                         3274.49   \n",
+       "17650                        7985.55                         1486.99   \n",
+       "17651                        3790.96                         4566.52   \n",
+       "17652                        3227.34                         3207.12   \n",
+       "17653                        3167.26                         6232.00   \n",
+       "\n",
+       "       current_month_credit  previous_month_credit  current_month_debit  \\\n",
+       "0                      0.20                   0.20                 0.20   \n",
+       "1                      0.33                 714.61               588.62   \n",
+       "2                      0.36                   0.36               857.50   \n",
+       "3                      0.64                   0.64              1299.64   \n",
+       "4                      0.27                   0.27               443.13   \n",
+       "...                     ...                    ...                  ...   \n",
+       "17649                  0.26                   0.26                 8.50   \n",
+       "17650                  0.09                 200.09               188.61   \n",
+       "17651                  0.30                   0.30              1428.87   \n",
+       "17652                  0.61                   0.61                 0.61   \n",
+       "17653                  0.40                3562.12                14.69   \n",
+       "\n",
+       "       previous_month_debit  current_month_balance  previous_month_balance  \\\n",
+       "0                       NaN                1458.71                 1458.71   \n",
+       "1                   1538.06                1157.15                 1677.16   \n",
+       "2                    286.07               15719.44                15349.75   \n",
+       "3                    439.26                7076.06                 7755.98   \n",
+       "4                   5688.44                8563.84                 5317.04   \n",
+       "...                     ...                    ...                     ...   \n",
+       "17649                162.79                2365.52                 2324.21   \n",
+       "17650                188.61               23745.37                   38.98   \n",
+       "17651                714.59                3389.72                 4325.68   \n",
+       "17652                  0.61                3227.34                 3227.34   \n",
+       "17653               6728.97                 948.82                 4074.91   \n",
+       "\n",
+       "      churn  \n",
+       "0       Yes  \n",
+       "1        No  \n",
+       "2       Yes  \n",
+       "3       Yes  \n",
+       "4       Yes  \n",
+       "...     ...  \n",
+       "17649   Yes  \n",
+       "17650   Yes  \n",
+       "17651   Yes  \n",
+       "17652   Yes  \n",
+       "17653    No  \n",
+       "\n",
+       "[17654 rows x 20 columns]"
+      ]
+     },
+     "execution_count": 60,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_.replace('nan',np.NaN)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a10c5a91",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "id": "3f1f6d0e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "train_data=df_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 62,
+   "id": "f5a28308",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "customer_id                       False\n",
+       "vintage                           False\n",
+       "age                               False\n",
+       "gender                            False\n",
+       "dependents                        False\n",
+       "occupation                         True\n",
+       "customer_nw_category              False\n",
+       "branch_code                       False\n",
+       "days_since_last_transaction       False\n",
+       "current_balance                    True\n",
+       "previous_month_end_balance        False\n",
+       "average_monthly_balance_prevQ     False\n",
+       "average_monthly_balance_prevQ2    False\n",
+       "current_month_credit              False\n",
+       "previous_month_credit             False\n",
+       "current_month_debit               False\n",
+       "previous_month_debit               True\n",
+       "current_month_balance              True\n",
+       "previous_month_balance            False\n",
+       "churn                             False\n",
+       "dtype: bool"
+      ]
+     },
+     "execution_count": 62,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_.isna().any()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 114,
+   "id": "b9f762d1",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "pandas.core.series.Series"
+      ]
+     },
+     "execution_count": 114,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 154,
+   "id": "51ad909d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "y= train_data['churn'].map({'Yes': 1, 'No': 0}).copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "id": "aed41469",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X=train_data.drop('churn',axis=1).copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 155,
+   "id": "4e94453d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=15611, stratify=y)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "id": "739af61b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Move this around later\n",
+    "data_frame=X_train"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "id": "c85ea8eb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def make_binary(data_frame):\n",
+    "    #takes data frame and returns a binary column\n",
+    "    data_frame['churn'] = data_frame['churn'].map({'Yes': 1, 'No': 0})\n",
+    "    return data_frame['churn']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "id": "b666e7fa",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def make_copy(data_frame):\n",
+    "    data_frame_copy=data_frame.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 69,
+   "id": "7168725f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def make_nan_math_type(data_frame):\n",
+    "    #takes a data frame and replaces all missing values with type np.NaN\n",
+    "    df_=data_frame.copy()\n",
+    "    data_frame=pd.DataFrame(df_.replace({'nan':np.NaN}))\n",
+    "    return data_frame"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "id": "2375ca6f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "categorical_vars=['gender','occupation','customer_nw_category']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "id": "d99002be",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "numeric_data=['customer_id', 'vintage', 'age', 'dependents', 'branch_code', 'days_since_last_transaction',\n",
+    "       'current_balance', 'previous_month_end_balance',\n",
+    "       'average_monthly_balance_prevQ', 'average_monthly_balance_prevQ2',\n",
+    "       'current_month_credit', 'previous_month_credit', 'current_month_debit',\n",
+    "       'previous_month_debit', 'current_month_balance',\n",
+    "       'previous_month_balance']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "id": "d2165b2b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fodder= ['current_month_balance','average_monthly_balance_prevQ2','current_month_credit','previous_month_credit','current_month_debit',\n",
+    "        'previous_month_debit','previous_month_balance','dependents','days_since_last_transaction']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "id": "09a55fb2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "b=['current_month_balance','current_month_credit']\n",
+    "c=['current_month_balance','previous_month_credit']\n",
+    "d=['current_month_balance','current_month_debit']\n",
+    "e=['current_month_balance','previous_month_debit']\n",
+    "f=['current_month_balance','previous_month_balance']\n",
+    "g=['current_month_balance','dependents','previous_month_balance']\n",
+    "h=['current_month_balance','days_since_last_transaction','previous_month_balance']\n",
+    "i=['current_month_balance','current_month_debit','previous_month_balance']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "id": "548c2264",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "discrete_vars=numeric_data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "id": "889bb052",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "target_data = train_data['churn'].copy"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 76,
+   "id": "6502444e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "###### new Columns\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "id": "c44a6495",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def current_month_balance_p_average_monthly_balance_prevQ2(data_frame):\n",
+    "    data_frame['current_month_balance_per_average_monthly_balance_prevQ2']=data_frame['current_month_balance']/data_frame['average_monthly_balance_prevQ2']\n",
+    "    return pd.DataFrame(data_frame['current_month_balance_per_average_monthly_balance_prevQ2'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 78,
+   "id": "89bfc688",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def current_month_balance_p_current_month_credit(data_frame):\n",
+    "    data_frame['current_month_balance_per_current_month_credit']=data_frame['current_month_balance']/data_frame['current_month_credit']\n",
+    "    return pd.DataFrame(data_frame['current_month_balance_per_current_month_credit'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "id": "c0533738",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def current_month_balance_p_previous_month_credit(data_frame):\n",
+    "    data_frame['current_month_balance_per_previous_month_credit']=data_frame['current_month_balance']/data_frame['previous_month_credit']\n",
+    "    return pd.DataFrame(data_frame['current_month_balance_per_previous_month_credit'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "id": "7499959b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def current_month_balance_p_current_month_debit(data_frame):\n",
+    "    data_frame['current_month_balance_per_current_month_debit']=data_frame['current_month_balance']/data_frame['current_month_debit']\n",
+    "    return pd.DataFrame(data_frame['current_month_balance_per_current_month_debit'])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "id": "013feeb4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def current_month_balance_p_previous_month_debit(data_frame):\n",
+    "        data_frame['current_month_balance_per_previous_month_debit']=data_frame['current_month_balance']/data_frame['previous_month_debit']\n",
+    "        return pd.DataFrame(data_frame['current_month_balance_per_previous_month_debit'])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "id": "84aacc67",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def current_month_balance_p_previous_month_balance(data_frame):\n",
+    "    data_frame['current_month_balance_per_previous_month_balance']=data_frame['current_month_balance']/data_frame['previous_month_balance']\n",
+    "    return pd.DataFrame(data_frame['current_month_balance_per_previous_month_balance'])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 83,
+   "id": "875fa6a2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def current_month_balance_add_dependents_p_previous_month_balance(data_frame):\n",
+    "    data_frame['cmb_add_dependents_p_previous_month_balance']= (data_frame['current_month_balance']+data_frame['dependents'])/data_frame['previous_month_balance']\n",
+    "    return pd.DataFrame(data_frame['cmb_add_dependents_p_previous_month_balance'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 84,
+   "id": "1bf1666f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def current_month_balance_add_days_p_previous_month_balance(data_frame):\n",
+    "    data_frame['current_month_balance_add_days_per_previous_month_balance']= (data_frame['current_month_balance']+data_frame['days_since_last_transaction'])/data_frame['previous_month_balance']\n",
+    "    return pd.DataFrame(data_frame['current_month_balance_add_days_p_previous_month_balance'])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 85,
+   "id": "de265449",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def current_month_balance_add_current_month_debit_p_previous_month_balance(data_frame):\n",
+    "    data_frame['current_month_balance_add_current_month_debit_per_previous_month_balance']=(data_frame['current_month_balance']+data['current_month_debit'])/data_frame['previous_month_balance']\n",
+    "    return pd.DataFrame(data_frame['current_month_balance_add_current_month_debit_per_previous_month_balance'])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 86,
+   "id": "d36bbf9e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "## balance features\n",
+    "def impute_balance(df):\n",
+    "    \"\"\" Fill in missing values in each column with the average value of other columns in the same row\n",
+    "        df: a panda dataframe. To be imputed.\n",
+    "        \n",
+    "        return: a pandas dataframe without missing values\n",
+    "    \"\"\"\n",
+    "    s_= []\n",
+    "    for i in range(df.shape[1]):\n",
+    "        s = df.iloc[:,i] \n",
+    "        s_.append(s.fillna(df.mean(axis=1,skipna=True)))\n",
+    "    s_ = pd.DataFrame.from_records(s_).transpose()\n",
+    "    return s_\n",
+    "\n",
+    "# debit and credit features\n",
+    "def impute_credit_debit(df):\n",
+    "    \"\"\" Fill in missing values in each column with the average value of other columns in the same row\n",
+    "            then add some randomness to the replacement value.\n",
+    "        df: a panda dataframe. To be imputed.\n",
+    "        \n",
+    "        return: a pandas dataframe without missing values\n",
+    "    \"\"\"\n",
+    "    s_= []\n",
+    "    for i in range(df.shape[1]):\n",
+    "        s = df.iloc[:,i] \n",
+    "        s_.append(s.fillna(df.mean(axis=1)*(1+np.random.randn())))\n",
+    "    s_ = pd.DataFrame.from_records(s_).transpose()\n",
+    "    return s_\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 87,
+   "id": "6fe2e1f9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#New columns "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 88,
+   "id": "9f55a24b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "new_col_a=FunctionTransformer(func=current_month_balance_p_average_monthly_balance_prevQ2)\n",
+    "new_col_b=FunctionTransformer(func=current_month_balance_p_current_month_credit)\n",
+    "new_col_c=FunctionTransformer(func=current_month_balance_p_previous_month_credit)\n",
+    "new_col_d=FunctionTransformer(func=current_month_balance_p_current_month_debit)\n",
+    "new_col_e=FunctionTransformer(func=current_month_balance_p_previous_month_debit)\n",
+    "new_col_f=FunctionTransformer(func=current_month_balance_p_previous_month_balance)\n",
+    "new_col_g=FunctionTransformer(func=current_month_balance_add_dependents_p_previous_month_balance)\n",
+    "new_col_h=FunctionTransformer(func=current_month_balance_add_days_p_previous_month_balance)\n",
+    "new_col_i=FunctionTransformer(func=current_month_balance_add_current_month_debit_p_previous_month_balance)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "id": "476a9f3b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "a=['current_month_balance','average_monthly_balance_prevQ2']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 90,
+   "id": "2441f296",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "missing_num=['current_balance','previous_month_debit','current_month_balance']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 91,
+   "id": "966f5efe",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "FunctionTransformer(func=<function current_month_balance_p_previous_month_balance at 0x7fa35b954160>)"
+      ]
+     },
+     "execution_count": 91,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "new_col_f"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 92,
+   "id": "203e885a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "binary_transform = FunctionTransformer(func=make_binary)\n",
+    "nan_transform= FunctionTransformer(func=make_nan_math_type)\n",
+    "copies=FunctionTransformer(func=make_copy)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 93,
+   "id": "3c995da7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.preprocessing import LabelEncoder\n",
+    "target=LabelEncoder()\n",
+    "target_t=target.fit_transform(np.ravel(target_data))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 94,
+   "id": "09841bea",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'I may need to impute math functions before I impute the categorical functions. '"
+      ]
+     },
+     "execution_count": 94,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "\"\"\"I may need to impute math functions before I impute the categorical functions. \"\"\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 96,
+   "id": "0797e215",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Next dealing with the missing numeric variables.\n",
+    "\n",
+    "#imputing missing values for mathematical variables.\n",
+    "\n",
+    "num_knn_step=('knn_impute',KNNImputer(n_neighbors=5))\n",
+    "\n",
+    "num_steps = [num_knn_step]\n",
+    "\n",
+    "num_pipe = Pipeline(num_steps)\n",
+    "\n",
+    "num_transformers = [('num', num_pipe, numeric_data)]\n",
+    "\n",
+    "#Scaling the data for use in later algorithms. \n",
+    "\n",
+    "num_scl_step = ('scl', MinMaxScaler())\n",
+    "\n",
+    "scl_steps=[num_scl_step]\n",
+    "\n",
+    "scl_pipe=Pipeline(scl_steps)\n",
+    "\n",
+    "scl_transformers = [('scale',scl_pipe,numeric_data,missing_num)]\n",
+    "\n",
+    "nan_transform_step=('impute_NaN',nan_transform)\n",
+    "#zero_out=SimpleImputer(strategy='median')\n",
+    "\n",
+    "#nan_pipe=Pipeline(nan_transform_step)\n",
+    "\n",
+    "#nan_transformers= [('nanaa',nan_pipe,numeric_data)]\n",
+    "\n",
+    "\n",
+    "#Imputing before\n",
+    "\n",
+    "#New columns containing engineered features in the datset.\n",
+    "column_a_step=('column_a',new_col_a)\n",
+    "\n",
+    "column_b_step=('column_b',new_col_b)\n",
+    "\n",
+    "column_c_step=('column_c',new_col_c)\n",
+    "\n",
+    "column_d_step=('column_d',new_col_d)\n",
+    "\n",
+    "column_e_step=('column_e',new_col_e)\n",
+    "\n",
+    "column_f_step=('column_f',new_col_f)\n",
+    "\n",
+    "column_g_step=('column_g',new_col_g)\n",
+    "\n",
+    "column_h_step=('column_h',new_col_h)\n",
+    "\n",
+    "column_i_step=('column_i',new_col_i)\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "#Bringing new features into the dataset.\n",
+    "\n",
+    "featured_steps=[column_a_step]\n",
+    "\n",
+    "features_pipe=Pipeline(featured_steps)\n",
+    "\n",
+    "eng_transformers= [(\"engineered\",features_pipe, a)]\n",
+    "\n",
+    "second_steps=[column_b_step]\n",
+    "\n",
+    "second_pipe=Pipeline(second_steps)\n",
+    "\n",
+    "second_transformers=[('second',second_pipe, b )]\n",
+    "\n",
+    "third_steps=[column_c_step]\n",
+    "\n",
+    "third_pipe=Pipeline(third_steps)\n",
+    "\n",
+    "third_transformers=[('third',third_pipe, c)]\n",
+    "\n",
+    "fourth_steps=[column_d_step]\n",
+    "\n",
+    "fourth_pipe=Pipeline(fourth_steps)\n",
+    "\n",
+    "fourth_transformers=[('fourth',fourth_pipe, d)]\n",
+    "\n",
+    "fifth_steps=[column_e_step]\n",
+    "\n",
+    "fifth_pipe=Pipeline(fifth_steps)\n",
+    "\n",
+    "fifth_transformers=[('fifth',fifth_pipe, e)]\n",
+    "\n",
+    "sixth_steps=[column_e_step]\n",
+    "\n",
+    "sixth_pipe=Pipeline(sixth_steps)\n",
+    "\n",
+    "sixth_transformers=[('sixth',sixth_pipe,f)]\n",
+    "\n",
+    "seventh_steps=[column_g_step]\n",
+    "\n",
+    "seventh_pipe=Pipeline(seventh_steps)\n",
+    "\n",
+    "seventh_tranformers=[('seventh',seventh_pipe,g)]\n",
+    "\n",
+    "eighth_steps=[column_h_step]\n",
+    "\n",
+    "eighth_pipe=Pipeline(eighth_steps)\n",
+    "\n",
+    "eighth_transformers=[('eighth',eighth_pipe,i)]\n",
+    "\n",
+    "ninth_steps=[column_i_step]\n",
+    "\n",
+    "ninth_pipe=Pipeline(ninth_steps)\n",
+    "\n",
+    "ninth_transformers=[('ninth',ninth_pipe,i)]\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "#Dealing with the categorical variables.\n",
+    "\n",
+    "missing_cat_data=('imputer', SimpleImputer(strategy='constant', fill_value='missing'))\n",
+    "\n",
+    "cat_ohe_step = ('ohe', OneHotEncoder(sparse=False, handle_unknown='ignore'))\n",
+    "\n",
+    "cat_steps = [missing_cat_data,cat_ohe_step]\n",
+    "\n",
+    "cat_pipe = Pipeline(cat_steps)\n",
+    "\n",
+    "cat_transformers = [('cat', cat_pipe, categorical_vars)]\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 97,
+   "id": "6bbc6777",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Make this work with the aboe pipeline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 138,
+   "id": "850420ce",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ct = ColumnTransformer(transformers=num_transformers + scl_transformers +cat_transformers + eng_transformers +second_transformers+third_transformers+fourth_transformers+fifth_transformers+sixth_transformers+seventh_tranformers+eighth_transformers+ninth_transformers)\n",
+    "ct = ColumnTransformer(transformers=num_transformers+cat_transformers)\n",
+    "ct.fit(data_frame[categorical_vars + discrete_vars])\n",
+    "X_train_transformed = ct.transform(data_frame[categorical_vars + discrete_vars ])\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 99,
+   "id": "52d2af1b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#y_train_t = nf[['churn']].values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 100,
+   "id": "3660de83",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Performing Pca reduction on X_train_transformed \n",
+    "\"\"\"PCA reduction should help increase the predictive power of the models and reduce training times.\"\"\"\n",
+    "pca_2f = PCA(n_components=14)\n",
+    "\n",
+    "lower_nf = pca_2f.fit_transform(X_train_transformed)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 101,
+   "id": "c1b67aa4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0.4646981 , 0.7177318 , 0.85324369, 0.9041219 , 0.93354648,\n",
+       "       0.95859352, 0.97560727, 0.98788356, 0.99579297, 0.99877093,\n",
+       "       0.99945352, 0.99989031, 0.99999883, 0.99999996])"
+      ]
+     },
+     "execution_count": 101,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pca_2f_cum_var = np.cumsum(pca_2f.explained_variance_ratio_)\n",
+    "pca_2f_cum_var\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 102,
+   "id": "96030715",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X_train_t=lower_nf"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 103,
+   "id": "a23b4393",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def get_roc_score(model):\n",
+    "    cv_results = cross_validate(model, X_train_t, np.ravel(y_train),scoring='roc_auc', cv=5)\n",
+    "    sorted(cv_results.keys())\n",
+    "    ['fit_time', 'score_time', 'test_score']\n",
+    "    print(\"The roc_auc scores:\",cv_results['test_score'])\n",
+    "    print(\"The mean roc_acuc score is:\",cv_results['test_score'].mean())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 104,
+   "id": "5f9265b9",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(14123, 27)"
+      ]
+     },
+     "execution_count": 104,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X_train_transformed.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 105,
+   "id": "e2d771f4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(14123, 27)"
+      ]
+     },
+     "execution_count": 105,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X_train_transformed.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 106,
+   "id": "e6b45f95",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(17654, 20)"
+      ]
+     },
+     "execution_count": 106,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 107,
+   "id": "5bd22d0e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(17654, 20)"
+      ]
+     },
+     "execution_count": 107,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train_data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 108,
+   "id": "bfbe21b2",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(14123, 14)"
+      ]
+     },
+     "execution_count": 108,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X_train_t.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "id": "2c371bdc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import joblib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "id": "94002451",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['ct.joblib']"
+      ]
+     },
+     "execution_count": 64,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "joblib.dump(ct,'ct.joblib')\n",
+    "# pipeline_data = joblib.load('pipeline_dat.joblib')\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bbc8e943",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "y_pred_knn=gbc.predict(X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 120,
+   "id": "2933f7aa",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "final_rfc=test_rfc=RandomForestClassifier(random_state=15611,n_estimators=600,min_samples_split=56,criterion='gini')\n",
+    "start=time.time()\n",
+    "final_rfc.fit(X_train_t, np.ravel(y_train))\n",
+    "stop=time.time()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 110,
+   "id": "d3192fb5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The roc_auc scores: [0.81725767 0.84075847 0.81845693 0.81494854 0.84716275]\n",
+      "The mean roc_acuc score is: 0.8277168712842287\n"
+     ]
+    }
+   ],
+   "source": [
+    "get_roc_score(final_rfc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 111,
+   "id": "cbc78822",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#or I could build a pipeline using labelencoding."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 112,
+   "id": "92fd1b4d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The roc_auc scores: [0.81725767 0.84075847 0.81845693 0.81494854 0.84716275]\n",
+      "The mean roc_acuc score is: 0.8277168712842287\n"
+     ]
+    }
+   ],
+   "source": [
+    "get_roc_score(final_rfc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "id": "0d93a999",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "13786    0\n",
+       "5205     0\n",
+       "1060     0\n",
+       "369      1\n",
+       "213      0\n",
+       "        ..\n",
+       "14463    1\n",
+       "5489     1\n",
+       "13229    1\n",
+       "2056     1\n",
+       "142      1\n",
+       "Name: churn, Length: 14123, dtype: int64"
+      ]
+     },
+     "execution_count": 58,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "y_train"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 115,
+   "id": "9beef657",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The roc_auc scores: [0.56395435 0.58904467 0.55228786 0.5524998  0.56058962]\n",
+      "The mean roc_acuc score is: 0.5636752633085742\n"
+     ]
+    }
+   ],
+   "source": [
+    "get_roc_score(final_rfc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 116,
+   "id": "10dc8543",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "AdaBoostClassifier(random_state=15611)"
+      ]
+     },
+     "execution_count": 116,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#ADABOOSETD\n",
+    "ada_clf=AdaBoostClassifier(random_state=15611)\n",
+    "ada_clf.fit(X_train_t,np.ravel(y_train))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 117,
+   "id": "64f94aa3",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The roc_auc scores: [0.80006507 0.8269155  0.80755947 0.79519394 0.82826834]\n",
+      "The mean roc_acuc score is: 0.8116004634958557\n"
+     ]
+    }
+   ],
+   "source": [
+    "get_roc_score(ada_clf)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 118,
+   "id": "39d0dbed",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "ExtraTreesClassifier(random_state=15611)"
+      ]
+     },
+     "execution_count": 118,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Extra trees\n",
+    "ext_t=ExtraTreesClassifier(random_state=15611)\n",
+    "ext_t.fit(X_train_t,np.ravel(y_train))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 181,
+   "id": "b4dd2a68",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'In order to make use of sklearn algorithms data must not contain any missing values\\n the data is expected to be all numerical. Algorithms sometimes need data to be sscaled. Missing data in the pipeline was marked as a mathematical none type, then k-nearest neighbour was used to fill missing mathematical data. \\n This approach was chosen because it draws information from the other columns in order to preserve the '"
+      ]
+     },
+     "execution_count": 181,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "'''In order to make use of sklearn algorithms data must not contain any missing values\\n the data is expected to be all numerical. Algorithms sometimes need data to be sscaled. Missing data in the pipeline was marked as a mathematical none type, then k-nearest neighbour was used to fill missing mathematical data. \\n This approach was chosen because it draws information from the other columns in order to preserve the '''"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 131,
+   "id": "5d853a61",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "gbc=ensemble.GradientBoostingClassifier(n_estimators=70,min_samples_split=600,max_depth=9,random_state=15611)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 133,
+   "id": "0847f437",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Need to get the X_test data fitted in the pipeline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 136,
+   "id": "bcc75a5b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test=X_test.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 139,
+   "id": "b8cb216e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_t = ct.transform(test[categorical_vars + discrete_vars ])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 140,
+   "id": "e9320fad",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ct.fit(test[categorical_vars + discrete_vars])\n",
+    "test_t = ct.transform(test[categorical_vars + discrete_vars ])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 142,
+   "id": "30828bc9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "gbc=ensemble.GradientBoostingClassifier(n_estimators=70,min_samples_split=600,max_depth=9,random_state=15611)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 163,
+   "id": "7b3b0b7c",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "GradientBoostingClassifier(max_depth=9, min_samples_split=600, n_estimators=70,\n",
+       "                           random_state=15611)"
+      ]
+     },
+     "execution_count": 163,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "gbc.fit(test_t,np.ravel(y_test))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 164,
+   "id": "4e0bd863",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "y_pred_knn=gbc.predict(test_t)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 165,
+   "id": "be6daef3",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "ROC_AUC_Accuracy: 0.7864790488353707\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"ROC_AUC_Accuracy:\",roc_auc_score(np.ravel(y_test), y_pred_knn))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 150,
+   "id": "f1a254b4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[2.0302e+04, 1.0580e+03, 3.8000e+01, ..., 0.0000e+00, 0.0000e+00,\n",
+       "        1.0000e+00],\n",
+       "       [1.1748e+04, 5.0100e+02, 4.7000e+01, ..., 1.0000e+00, 0.0000e+00,\n",
+       "        0.0000e+00],\n",
+       "       [2.0547e+04, 2.9520e+03, 4.4000e+01, ..., 0.0000e+00, 0.0000e+00,\n",
+       "        1.0000e+00],\n",
+       "       ...,\n",
+       "       [1.4670e+04, 5.9140e+03, 6.4000e+01, ..., 1.0000e+00, 0.0000e+00,\n",
+       "        0.0000e+00],\n",
+       "       [9.0920e+03, 2.2930e+03, 4.8000e+01, ..., 0.0000e+00, 1.0000e+00,\n",
+       "        0.0000e+00],\n",
+       "       [2.3244e+04, 1.5680e+03, 3.4000e+01, ..., 0.0000e+00, 1.0000e+00,\n",
+       "        0.0000e+00]])"
+      ]
+     },
+     "execution_count": 150,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "test_t"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 166,
+   "id": "240d85e1",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "ROC_AUC_Accuracy: 0.7864790488353707\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"ROC_AUC_Accuracy:\",roc_auc_score(y_test, y_pred_knn))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 167,
+   "id": "34fa6d49",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "AdaBoostClassifier(n_estimators=115, random_state=15611)"
+      ]
+     },
+     "execution_count": 167,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ada_clf=AdaBoostClassifier(random_state=15611,n_estimators =115)\n",
+    "ada_start=time.time()\n",
+    "ada_clf.fit(test_t,np.ravel(y_test))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 171,
+   "id": "06349013",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "y_pred_knn=ada_clf.predict(test_t)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 172,
+   "id": "3d45044a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "ROC_AUC_Accuracy: 0.7185246001337955\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"ROC_AUC_Accuracy:\",roc_auc_score(y_test, y_pred_knn))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 174,
+   "id": "566524f6",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "RandomForestClassifier(min_samples_split=50, n_estimators=600,\n",
+       "                       random_state=15611)"
+      ]
+     },
+     "execution_count": 174,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "final_rfc=test_rfc=RandomForestClassifier(random_state=15611,n_estimators=600,min_samples_split=50,criterion='gini')\n",
+    "start=time.time()\n",
+    "final_rfc.fit(test_t,np.ravel(y_test))\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 175,
+   "id": "c3cf54ca",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "y_pred_knn=final_rfc.predict(test_t)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 176,
+   "id": "4ed87cb8",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "ROC_AUC_Accuracy: 0.7374391838472298\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"ROC_AUC_Accuracy:\",roc_auc_score(y_test, y_pred_knn))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6c1a0bbf",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
