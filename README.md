@@ -1,7 +1,7 @@
 # CustomerChurn
 Customer churn prediction using machine learning algorithms
 
-Data shource: "https://www.kaggle.com/competitions/mdss-customer-churn-prediction/data" (Not available after compitition ended)
+Data shource: "https://www.kaggle.com/competitions/mdss-customer-churn-prediction/data"
 
 Predictor Variables: 
 
@@ -10,6 +10,11 @@ Predictor Variables:
     'previous_month_balance', 'average_monthly_balance_prevQ', 'average_monthly_balance_prevQ2', 
     'current_month_credit', 'previous_month_credit', 'current_month_debit', 'previous_month_debit'
     
-target variable: 
+Target variable: 
 
     'churn'
+
+
+Use the following command to download required libraries:
+
+    pip install -r requirements.txt 
